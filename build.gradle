@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc SQLite Driver
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.36.0.3'
+
+    //https://www.joda.org/joda-time/ DateTime Library
+    implementation group: 'joda-time', name: 'joda-time', version: '2.12.5'
+}
+
+test {
+    useJUnitPlatform()
+}
