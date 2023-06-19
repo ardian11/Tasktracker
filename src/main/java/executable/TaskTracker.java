@@ -1,12 +1,17 @@
 package executable;
 
+import com.rockaport.alice.Alice;
+import com.rockaport.alice.AliceContextBuilder;
 import db.DataType.Preferences;
 import db.SavedData;
 import db.Task;
 import executable.support.Blob;
 import org.joda.time.DateTime;
+import ui.TrackerUI;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,10 +22,72 @@ public class TaskTracker {
 
     private ArrayList<SavedData> savedDataList;
 
+    private char[] password;
+
+    private Alice aes;
+
+    private TrackerUI ui;
+
     private Controller controller;
     public TaskTracker(Controller controller, ArrayList<Blob> savedData){
         this.controller = controller;
+        getPassword();
+        initEncryption();
         getSavedData(controller.getSavedData());
+        ui = new TrackerUI();
+    }
+
+    private void initEncryption() {
+        aes = new Alice(new AliceContextBuilder().build());
+
+        password = new String(getPassword(), StandardCharsets.UTF_8).toCharArray();
+        byte[] encryptedBytes = new byte[0];
+        try {
+            encryptedBytes = aes.encrypt("Hello".getBytes(), password);
+            System.out.println(new String(encryptedBytes));
+            byte[] decryptedBytes = aes.decrypt(encryptedBytes, password);
+            System.out.println(new String(decryptedBytes));
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private byte[] getPassword(){
+        String filePath = "src/main/java/executable/support/db08";
+
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            System.out.println("File exists!");
+
+            System.out.println("File name: " + file.getName());
+            System.out.println("Absolute path: " + file.getAbsolutePath());
+            System.out.println("File size: " + file.length() + " bytes");
+
+        } else {
+            System.out.println("Some files are missing!");
+        }
+
+        System.out.println("Readable: "+file.canRead());
+        System.out.println("Writeable: "+file.canWrite());
+
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            byte bytes[] = new byte[(int) file.length()];
+            byte b;
+            int i = 0;
+            while((b = (byte) fis.read()) != -1){
+                bytes[i] = b;
+                ++i;
+            }
+
+            return bytes;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -35,7 +102,7 @@ public class TaskTracker {
     private void getSavedData(ArrayList<Blob> blobs){
         for(Blob blob : blobs){
             if(blob.getCls() == Preferences.class){
-                preferences = (SavedData<Preferences>) blobToData(blob).getObject();
+                preferences = new SavedData<Preferences>((Preferences) blobToData(blob).getObject());
             }else{
                 savedDataList.add(blobToData(blob));
             }
@@ -65,6 +132,10 @@ public class TaskTracker {
 
     private <T> SavedData<T> blobToData(Blob blob){
         SavedData<T> savedData = new SavedData<T>(null);
+
+        if(blob.getCls() == Preferences.class && blob.getData() == null){
+            return new SavedData(new Preferences());
+        }
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(blob.getData());
             ObjectInput ois = new ObjectInputStream(bais);

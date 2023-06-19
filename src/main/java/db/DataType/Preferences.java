@@ -3,16 +3,20 @@ package db.DataType;
 import java.io.Serializable;
 
 public class Preferences implements Serializable {
-    private int roundMinutesTo;
-    private boolean autoPause;
-    private boolean afkWarning;
+    private int roundMinutesTo = 15;
+    private boolean autoPause = true;
+    private boolean afkWarning = true;
 
     private int dropboxSize;
 
-    public void Preferences(int roundMinutesTo, boolean autoPause, boolean afkWarning){
+    public Preferences(int roundMinutesTo, boolean autoPause, boolean afkWarning){
         this.roundMinutesTo = roundMinutesTo;
         this.autoPause = autoPause;
         this.afkWarning = afkWarning;
+    }
+
+    public Preferences(){
+
     }
 
     public int getRoundMinutesTo() {

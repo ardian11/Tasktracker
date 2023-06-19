@@ -27,8 +27,11 @@ public class TrackerUI extends JFrame {
             //TODO
         });
 
+        JButton settings = new JButton("Settings");
+
         JPanel buttonContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonContainer.add(saveButton);
+        buttonContainer.add(settings);
         headerPanel.add(buttonContainer, BorderLayout.NORTH);
 
         buttonPanel = new JPanel();

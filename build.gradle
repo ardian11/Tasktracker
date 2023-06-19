@@ -7,6 +7,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -18,6 +19,9 @@ dependencies {
 
     //https://www.joda.org/joda-time/ DateTime Library
     implementation group: 'joda-time', name: 'joda-time', version: '2.12.5'
+
+    //encryption
+    implementation 'com.github.rockaport:alice:0.9.0'
 }
 
 test {

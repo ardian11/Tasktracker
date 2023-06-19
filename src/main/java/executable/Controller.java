@@ -6,9 +6,11 @@ import db.Task;
 import org.joda.time.DateTime;
 
 import executable.support.Blob;
+import db.DataType.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+
 
 public class Controller {
     private static final String DBNAME = "dbTasktracker.db";
@@ -52,7 +54,7 @@ public class Controller {
         try {
             while (resultSet.next()) {
                 try {
-                    String classname = resultSet.getString("class");
+                    String classname = resultSet.getString("classname");
                     Class cls = Class.forName(classname);
                     byte[] data = resultSet.getBytes("object");
 
@@ -103,7 +105,7 @@ public class Controller {
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:"+ DBNAME);
-            PreparedStatement stm = conn.prepareStatement("Update Table SavedData SET object = ? WHERE classname like 'Preferences'");
+            PreparedStatement stm = conn.prepareStatement("Update Table SavedData SET object = ? WHERE classname like 'db.DataType.Preferences'");
             stm.setBytes(1, blob.getData());
 
             stm.execute();
