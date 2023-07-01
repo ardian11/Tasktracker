@@ -1,15 +1,28 @@
 package ui;
 
+import db.Task;
+
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Objects;
 
 public class TrackerUI extends JFrame {
 
     private JPanel headerPanel;
-    private JPanel buttonPanel;
     private JScrollPane scrollPane;
+
+    private JPanel contentPanel;
+
+
+
+
+
+    private TaskUI currentTask;
+
 
     public TrackerUI(){
         setTitle("TaskTracker");
@@ -18,6 +31,8 @@ public class TrackerUI extends JFrame {
 
         ImageIcon icon = new  ImageIcon(this.getClass().getResource("/tasktracker_icon_128.png"));
         setIconImage(icon.getImage());
+
+
 
         headerPanel = new JPanel();
         headerPanel.setLayout(new BorderLayout());
@@ -34,10 +49,14 @@ public class TrackerUI extends JFrame {
         buttonContainer.add(settings);
         headerPanel.add(buttonContainer, BorderLayout.NORTH);
 
-        buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        scrollPane = new JScrollPane(buttonPanel);
+
+
+        contentPanel.add(new TaskUI(this));
+
+        scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         getContentPane().setLayout(new BorderLayout());
@@ -48,6 +67,7 @@ public class TrackerUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
 
     private static final String IMAGE_NAME =
             "/tasktracker_icon_128.png";
@@ -70,6 +90,18 @@ public class TrackerUI extends JFrame {
                 g.drawImage(getImage(), x, y, 18, 18, null);
             }
         };
+    }
+
+    public void setCurrentTask(TaskUI task) {
+        if(currentTask != null) {
+            currentTask.setBorder(new BevelBorder(0, new Color(196, 192, 192), new Color(188, 243, 226, 255)));
+            currentTask.setBackground(new Color(165, 192, 185));
+        }
+
+        currentTask = task;
+        currentTask.setBorder(new BevelBorder(0, new Color(94, 194, 152), new Color(40, 84, 65, 255)));
+        currentTask.setBackground(new Color(198, 232, 223));
+
     }
 }
 

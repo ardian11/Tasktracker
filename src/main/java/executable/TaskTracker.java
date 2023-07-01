@@ -1,7 +1,5 @@
 package executable;
 
-import com.rockaport.alice.Alice;
-import com.rockaport.alice.AliceContextBuilder;
 import db.DataType.Preferences;
 import db.SavedData;
 import db.Task;
@@ -23,35 +21,14 @@ public class TaskTracker {
     private ArrayList<SavedData> savedDataList;
 
     private char[] password;
-
-    private Alice aes;
-
     private TrackerUI ui;
 
     private Controller controller;
     public TaskTracker(Controller controller, ArrayList<Blob> savedData){
         this.controller = controller;
         getPassword();
-        initEncryption();
         getSavedData(controller.getSavedData());
         ui = new TrackerUI();
-    }
-
-    private void initEncryption() {
-        aes = new Alice(new AliceContextBuilder().build());
-
-        password = new String(getPassword(), StandardCharsets.UTF_8).toCharArray();
-        byte[] encryptedBytes = new byte[0];
-        try {
-            encryptedBytes = aes.encrypt("Hello".getBytes(), password);
-            System.out.println(new String(encryptedBytes));
-            byte[] decryptedBytes = aes.decrypt(encryptedBytes, password);
-            System.out.println(new String(decryptedBytes));
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private byte[] getPassword(){
