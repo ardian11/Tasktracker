@@ -1,5 +1,7 @@
 import db.DataType.HelpWarning;
 import db.DataType.Preferences;
+import executable.Controller;
+import executable.TaskTracker;
 import ui.TrackerUI;
 
 public class Test {
@@ -8,7 +10,8 @@ public class Test {
     }
 
     public static void testUI(){
-        new TrackerUI();
+        Controller c = new Controller();
+        new TrackerUI(new TaskTracker(c, c.getSavedData()));
     }
 
     public static void fullQualifiedNames(){

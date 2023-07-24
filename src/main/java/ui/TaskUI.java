@@ -1,10 +1,12 @@
 package ui;
 
+import db.Task;
+
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class TaskUI extends JPanel {
 
@@ -20,7 +22,11 @@ public class TaskUI extends JPanel {
     JButton start;
     JButton stop;
 
-    public TaskUI(TrackerUI tracker){
+    JCheckBox mark;
+
+    private Task task;
+
+    public TaskUI(TrackerUI tracker, ArrayList<String> taskNames){
 
         startTime = 0;
         currentTime = 0;
@@ -32,9 +38,11 @@ public class TaskUI extends JPanel {
         this.setBackground(new Color(165, 192, 185));
 
         taskName = new JComboBox<>();
+        taskName.setMinimumSize(new Dimension(500, taskName.getHeight()));
         taskName.setEditable(true);
-        taskName.addItem("Task 1");
-        taskName.addItem("Task 2");
+        for (String name : taskNames){
+            taskName.addItem(name);
+        }
 
         timerText = new JTextField("00:00");
         ActionListener updateTime = e -> {
@@ -69,10 +77,17 @@ public class TaskUI extends JPanel {
             start.setText("Start");
         });
 
+        mark = new JCheckBox("Remember task");
+        mark.setBackground(this.getBackground());
+
         this.add(taskName);
         this.add(timerText);
         this.add(start);
         this.add(stop);
+        this.add(mark);
     }
 
+    public JCheckBox getMark() {
+        return mark;
+    }
 }

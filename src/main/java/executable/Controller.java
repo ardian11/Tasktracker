@@ -131,7 +131,7 @@ public class Controller {
             while (resultSet.next()) {
                 String name = resultSet.getString("name");
                 DateTime lastUsed = new DateTime(resultSet.getDate("lastUsed"));
-                int useCount = resultSet.getInt("useCount");
+                int useCount = resultSet.getInt("usedCount");
                 boolean marked = resultSet.getBoolean("marked");
 
                 allTasks.add(new Task(name, lastUsed, useCount, marked));

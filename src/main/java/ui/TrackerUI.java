@@ -1,6 +1,7 @@
 package ui;
 
 import db.Task;
+import executable.TaskTracker;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class TrackerUI extends JFrame {
@@ -17,14 +19,17 @@ public class TrackerUI extends JFrame {
 
     private JPanel contentPanel;
 
-
-
+    private ArrayList<Task> taskList;
 
 
     private TaskUI currentTask;
 
+    private ArrayList<String> taskNames;
 
-    public TrackerUI(){
+    private AddTaskUI addTaskUI;
+
+
+    public TrackerUI(TaskTracker tracker){
         setTitle("TaskTracker");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(700, 400));
@@ -52,12 +57,18 @@ public class TrackerUI extends JFrame {
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
+        taskList = tracker.getAllTasks();
 
+        taskNames = new ArrayList<>();
+        taskList.stream().forEach(e->{
+            taskNames.add(e.getName());
+        });
 
-        contentPanel.add(new TaskUI(this));
+        contentPanel.add(new TaskUI(this, taskNames));
+        contentPanel.add(addTaskUI = new AddTaskUI(this));
 
         scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(headerPanel, BorderLayout.NORTH);
@@ -96,12 +107,21 @@ public class TrackerUI extends JFrame {
         if(currentTask != null) {
             currentTask.setBorder(new BevelBorder(0, new Color(196, 192, 192), new Color(188, 243, 226, 255)));
             currentTask.setBackground(new Color(165, 192, 185));
+            currentTask.getMark().setBackground(new Color(165, 192, 185));
         }
 
         currentTask = task;
         currentTask.setBorder(new BevelBorder(0, new Color(94, 194, 152), new Color(40, 84, 65, 255)));
         currentTask.setBackground(new Color(198, 232, 223));
+        currentTask.getMark().setBackground(new Color(198, 232, 223));
 
+    }
+
+    public void addTask(){
+        contentPanel.add(new TaskUI(this, taskNames));
+        contentPanel.remove(addTaskUI);
+        contentPanel.add(addTaskUI);
+        contentPanel.revalidate();
     }
 }
 

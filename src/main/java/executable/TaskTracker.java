@@ -8,10 +8,6 @@ import org.joda.time.DateTime;
 import ui.TrackerUI;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class TaskTracker {
@@ -26,47 +22,10 @@ public class TaskTracker {
     private Controller controller;
     public TaskTracker(Controller controller, ArrayList<Blob> savedData){
         this.controller = controller;
-        getPassword();
         getSavedData(controller.getSavedData());
-        ui = new TrackerUI();
+        ui = new TrackerUI(this);
+        AFKDetector.getAfkDetector();
     }
-
-    private byte[] getPassword(){
-        String filePath = "src/main/java/executable/support/db08";
-
-        File file = new File(filePath);
-
-        if (file.exists()) {
-            System.out.println("File exists!");
-
-            System.out.println("File name: " + file.getName());
-            System.out.println("Absolute path: " + file.getAbsolutePath());
-            System.out.println("File size: " + file.length() + " bytes");
-
-        } else {
-            System.out.println("Some files are missing!");
-        }
-
-        System.out.println("Readable: "+file.canRead());
-        System.out.println("Writeable: "+file.canWrite());
-
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            byte bytes[] = new byte[(int) file.length()];
-            byte b;
-            int i = 0;
-            while((b = (byte) fis.read()) != -1){
-                bytes[i] = b;
-                ++i;
-            }
-
-            return bytes;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     public void newTask(String name, DateTime lastUsed, int useCount, boolean marked){
         controller.insertTask(new Task(name, lastUsed, useCount, marked));
