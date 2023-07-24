@@ -1,6 +1,8 @@
 package ui;
 
+import db.DataType.Preferences;
 import db.Task;
+import executable.TaskTracker;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -24,7 +26,7 @@ public class TrackerUI extends JFrame {
     private TaskUI currentTask;
 
 
-    public TrackerUI(){
+    public TrackerUI(TaskTracker tracker){
         setTitle("TaskTracker");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(700, 400));
@@ -42,11 +44,14 @@ public class TrackerUI extends JFrame {
             //TODO
         });
 
-        JButton settings = new JButton("Settings");
+        JButton settingsButton = new JButton("Settings");
+        settingsButton.addActionListener(e->{
+            new SettingsUI(tracker.getPreferences());
+        });
 
         JPanel buttonContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonContainer.add(saveButton);
-        buttonContainer.add(settings);
+        buttonContainer.add(settingsButton);
         headerPanel.add(buttonContainer, BorderLayout.NORTH);
 
         contentPanel = new JPanel();

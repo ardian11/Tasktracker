@@ -28,7 +28,7 @@ public class TaskTracker {
         this.controller = controller;
         getPassword();
         getSavedData(controller.getSavedData());
-        ui = new TrackerUI();
+        ui = new TrackerUI(this);
     }
 
     private byte[] getPassword(){
@@ -122,6 +122,10 @@ public class TaskTracker {
             e.printStackTrace();
         }
         return savedData;
+    }
+
+    public Preferences getPreferences(){
+        return preferences.getObject();
     }
 
 
