@@ -9,14 +9,7 @@ public class Preferences implements Serializable {
 
     private int dropboxSize;
 
-    public Preferences(int roundMinutesTo, boolean autoPause, boolean afkWarning){
-        this.roundMinutesTo = roundMinutesTo;
-        this.autoPause = autoPause;
-        this.afkWarning = afkWarning;
-    }
-
     public Preferences(){
-
     }
 
     public int getRoundMinutesTo() {
