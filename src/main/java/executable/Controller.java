@@ -1,12 +1,9 @@
 package executable;
 
-import db.DataType.Preferences;
-import db.SavedData;
 import db.Task;
-import org.joda.time.DateTime;
-
 import executable.support.Blob;
-import db.DataType.*;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -81,9 +78,9 @@ public class Controller {
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:"+ DBNAME);
-            PreparedStatement stm = conn.prepareStatement("INSERT INTO Task (name, lastUsed, useCount, marked) VALUES (?, ?, ?, ?)");
+            PreparedStatement stm = conn.prepareStatement("INSERT INTO Task (name, lastUsed, usedCount, marked) VALUES (?, ?, ?, ?)");
             stm.setString(1, task.getName());
-            stm.setDate(2, new Date(task.getLastUsed().getMillis()));
+            stm.setString(2,  DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(DateTime.now()));
             stm.setInt(3, task.getUsedCount());
             stm.setBoolean(4, task.isMarked());
 
@@ -99,6 +96,16 @@ public class Controller {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void updateTask(Task task){
+        try {
+            setData("UPDATE Task SET usedCount = "+ task.getUsedCount() + ", lastUsed = '"+ DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(DateTime.now()) +"', marked = "+ task.isMarked() +" WHERE name = '"+ task.getName() +"';");
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void insertPreferences(Blob blob){

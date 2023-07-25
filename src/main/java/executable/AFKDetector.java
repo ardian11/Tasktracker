@@ -3,19 +3,25 @@ package executable;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
 
 import javax.swing.*;
+import java.util.TimerTask;
+import java.util.Timer;
 
 public class AFKDetector {
 
     //max. afk time in minutes
-    private float MAX_TIME = 1;
+    private float MAX_MINUTES = 1.f;
 
-    private float timePassed = 0;
+    //time passed since last input in seconds
+    private float secondsPassed = 0.f;
 
     private static AFKDetector afkDetector;
+    private Timer timer;
 
     private AFKDetector(){
         // Initialize the native hook.
@@ -27,22 +33,41 @@ public class AFKDetector {
             throw new RuntimeException(e);
         }
 
-        // Add the NativeMouseInputListener to listen for mouse events.
         GlobalScreen.addNativeMouseMotionListener(new NativeMouseMotionListener() {
             @Override
             public void nativeMouseMoved(NativeMouseEvent nativeEvent) {
-                System.out.println("x: " + nativeEvent.getX() + ", y: " + nativeEvent.getY());
+               secondsPassed = 0.f;
             }
         });
 
-        //TODO implement timer
+        GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
+            @Override
+            public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
+                secondsPassed = 0.f;
+            }
+        });
+
+        timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                secondsPassed++;
+                if(secondsPassed/60 > MAX_MINUTES){
+                    System.out.println("You're AFK!");
+                    timer.cancel();
+                }
+            }
+        };
+
+        timer.schedule(task, 0, 1000);
 
 
         // Set the GlobalScreen logger to null to avoid log messages.
         //GlobalScreen.setEventDispatcher(null);
     }
 
-    public static AFKDetector getAfkDetector(){
+    public static AFKDetector activate(){
         if(afkDetector == null){
             afkDetector = new AFKDetector();
         }
@@ -53,9 +78,11 @@ public class AFKDetector {
         JOptionPane.showMessageDialog(null, "AFK Detector cannot start!");
     }
 
-    public void dispose(){
+    public void deactivate(){
         try {
             GlobalScreen.unregisterNativeHook();
+            timer.cancel();
+            afkDetector = null;
         } catch (NativeHookException e) {
             throw new RuntimeException(e);
         }

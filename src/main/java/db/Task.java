@@ -35,4 +35,12 @@ public class Task {
     public boolean isMarked() {
         return marked;
     }
+
+    public void setUsedCount(int usedCount) {
+        this.usedCount = usedCount;
+    }
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+    }
 }

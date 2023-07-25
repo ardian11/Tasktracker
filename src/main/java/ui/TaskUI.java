@@ -17,7 +17,9 @@ public class TaskUI extends JPanel {
     private long currentTime;
     private boolean started = false;
 
-    private JComboBox<String> taskName;
+    private JComboBox<String> taskNames;
+
+    private String savedTaskName;
     JTextField timerText;
     JButton start;
     JButton stop;
@@ -37,11 +39,12 @@ public class TaskUI extends JPanel {
         this.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.setBackground(new Color(165, 192, 185));
 
-        taskName = new JComboBox<>();
-        taskName.setMinimumSize(new Dimension(500, taskName.getHeight()));
-        taskName.setEditable(true);
+        this.taskNames = new JComboBox<>();
+        this.taskNames.setMinimumSize(new Dimension(500, this.taskNames.getHeight()));
+        this.taskNames.setEditable(true);
+        this.taskNames.insertItemAt("", 0);
         for (String name : taskNames){
-            taskName.addItem(name);
+            this.taskNames.addItem(name);
         }
 
         timerText = new JTextField("00:00");
@@ -80,7 +83,7 @@ public class TaskUI extends JPanel {
         mark = new JCheckBox("Remember task");
         mark.setBackground(this.getBackground());
 
-        this.add(taskName);
+        this.add(this.taskNames);
         this.add(timerText);
         this.add(start);
         this.add(stop);
@@ -89,5 +92,17 @@ public class TaskUI extends JPanel {
 
     public JCheckBox getMark() {
         return mark;
+    }
+
+    public void setSavedTaskName(String savedTaskName) {
+        this.savedTaskName = savedTaskName;
+    }
+
+    public String getSavedTaskName() {
+        return savedTaskName;
+    }
+
+    public JComboBox<String> getTaskNames() {
+        return taskNames;
     }
 }

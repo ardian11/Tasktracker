@@ -6,11 +6,7 @@ import executable.TaskTracker;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class TrackerUI extends JFrame {
 
@@ -44,7 +40,7 @@ public class TrackerUI extends JFrame {
 
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
-            //TODO
+            tracker.setNewTasks(getNewTasks());
         });
 
         JButton settings = new JButton("Settings");
@@ -69,6 +65,7 @@ public class TrackerUI extends JFrame {
 
         scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(headerPanel, BorderLayout.NORTH);
@@ -122,6 +119,18 @@ public class TrackerUI extends JFrame {
         contentPanel.remove(addTaskUI);
         contentPanel.add(addTaskUI);
         contentPanel.revalidate();
+    }
+
+    public ArrayList<TaskUI> getNewTasks(){
+        ArrayList<TaskUI> newTasks = new ArrayList<>();
+        for(Component comp : contentPanel.getComponents()) {
+            if(comp.getClass().equals(TaskUI.class)){
+                TaskUI taskUI = (TaskUI) comp;
+                taskUI.setSavedTaskName(taskUI.getTaskNames().getEditor().getItem().toString());
+                newTasks.add(taskUI);
+            }
+        }
+        return newTasks;
     }
 }
 

@@ -5,6 +5,7 @@ import db.SavedData;
 import db.Task;
 import executable.support.Blob;
 import org.joda.time.DateTime;
+import ui.TaskUI;
 import ui.TrackerUI;
 
 import java.io.*;
@@ -15,8 +16,6 @@ public class TaskTracker {
     private SavedData<Preferences> preferences;
 
     private ArrayList<SavedData> savedDataList;
-
-    private char[] password;
     private TrackerUI ui;
 
     private Controller controller;
@@ -24,11 +23,32 @@ public class TaskTracker {
         this.controller = controller;
         getSavedData(controller.getSavedData());
         ui = new TrackerUI(this);
-        AFKDetector.getAfkDetector();
+        if(preferences.getObject().afkWarning()) {
+            AFKDetector.activate();
+        }
     }
 
-    public void newTask(String name, DateTime lastUsed, int useCount, boolean marked){
-        controller.insertTask(new Task(name, lastUsed, useCount, marked));
+    public void setNewTasks(ArrayList<TaskUI> tasksUI){
+        ArrayList<Task> newTasks = new ArrayList<>();
+        ArrayList<Task> currentTasks = controller.getAllTasks();
+
+        for(TaskUI taskUI : tasksUI){
+            if(taskUI.getSavedTaskName() != null && !taskUI.getSavedTaskName().isEmpty()){
+                boolean found = false;
+                for(Task task : currentTasks){
+                    if(taskUI.getSavedTaskName().equals(task.getName())){
+                        task.setUsedCount(task.getUsedCount() + 1);
+                        task.setMarked(taskUI.getMark().isSelected());
+                        controller.updateTask(task);
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) {
+                    controller.insertTask(new Task(taskUI.getSavedTaskName(), DateTime.now(), 1, taskUI.getMark().isSelected()));
+                }
+            }
+        }
     }
 
     public ArrayList<Task> getAllTasks(){
