@@ -60,8 +60,8 @@ public class TrackerUI extends JFrame {
             taskNames.add(e.getName());
         });
 
-        contentPanel.add(new TaskUI(this, taskNames));
         contentPanel.add(addTaskUI = new AddTaskUI(this));
+        addTask();
 
         scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -126,7 +126,7 @@ public class TrackerUI extends JFrame {
         for(Component comp : contentPanel.getComponents()) {
             if(comp.getClass().equals(TaskUI.class)){
                 TaskUI taskUI = (TaskUI) comp;
-                taskUI.setSavedTaskName(taskUI.getTaskNames().getEditor().getItem().toString());
+                taskUI.setSavedTaskName(taskUI.getTaskNameBox().getEditor().getItem().toString());
                 newTasks.add(taskUI);
             }
         }
