@@ -12,10 +12,13 @@ public class ComboBoxKeyListener extends KeyAdapter {
     TaskUI taskUI;
     ArrayList<String> taskNames;
 
+    Thread taskLoading;
+
     public ComboBoxKeyListener(TaskUI taskUI, ArrayList<String> taskNames){
         this.taskUI = taskUI;
         this.taskNames = taskNames;
         this.box = taskUI.getTaskNameBox();
+        taskLoading = new Thread();
     }
 
     String inputBuffer = "";
@@ -23,6 +26,8 @@ public class ComboBoxKeyListener extends KeyAdapter {
 
     @Override
     public void keyTyped(KeyEvent e) {
+        taskLoading.interrupt();
+
         if(!box.isPopupVisible()){
             box.showPopup();
         }
@@ -32,7 +37,6 @@ public class ComboBoxKeyListener extends KeyAdapter {
         if(e.getKeyChar() == KeyEvent.VK_BACK_SPACE){
             if(inputBuffer.length() > 0) {
                 inputBuffer = inputBuffer.substring(0, inputBuffer.length() - 1);
-                System.out.println("Remove");
                 removed = true;
             }
 
@@ -42,10 +46,10 @@ public class ComboBoxKeyListener extends KeyAdapter {
             }
         }else{
             inputBuffer += e.getKeyChar();
-            System.out.println("Add");
         }
 
         box.removeAllItems();
+        box.hidePopup();
         if(!inputBuffer.isEmpty()) {
             if(removed) {
                 box.setSelectedItem(inputBuffer);
@@ -53,12 +57,16 @@ public class ComboBoxKeyListener extends KeyAdapter {
                 box.setSelectedItem(inputBuffer.substring(0, inputBuffer.length() - 1));
             }
         }
-        System.out.println("Inputbuffer: " + inputBuffer);
         for(String name : taskNames){
             if(name.startsWith(inputBuffer)){
                 box.addItem(name);
             }
         }
+        box.showPopup();
+
+        taskLoading = new TaskLoadingThread(taskUI, inputBuffer, taskNames);
+        taskLoading.start();
+
 
     }
 }

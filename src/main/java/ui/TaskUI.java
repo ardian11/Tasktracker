@@ -93,6 +93,10 @@ public class TaskUI extends JPanel {
         this.add(mark);
     }
 
+    public void loadTask(String taskName){
+
+    }
+
     public JCheckBox getMark() {
         return mark;
     }
