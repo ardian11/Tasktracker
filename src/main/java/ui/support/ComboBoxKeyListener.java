@@ -9,10 +9,15 @@ import java.util.ArrayList;
 
 public class ComboBoxKeyListener extends KeyAdapter {
 
-    TaskUI taskUI;
-    ArrayList<String> taskNames;
+    private TaskUI taskUI;
+    private ArrayList<String> taskNames;
 
-    Thread taskLoading;
+    private Thread taskLoading;
+
+    private String inputBuffer = "";
+    private JComboBox<String> box;
+
+    private boolean manualInput = false;
 
     public ComboBoxKeyListener(TaskUI taskUI, ArrayList<String> taskNames){
         this.taskUI = taskUI;
@@ -21,12 +26,11 @@ public class ComboBoxKeyListener extends KeyAdapter {
         taskLoading = new Thread();
     }
 
-    String inputBuffer = "";
-    JComboBox<String> box;
 
     @Override
     public void keyTyped(KeyEvent e) {
         taskLoading.interrupt();
+        manualInput = true;
 
         if(!box.isPopupVisible()){
             box.showPopup();
@@ -57,6 +61,7 @@ public class ComboBoxKeyListener extends KeyAdapter {
                 box.setSelectedItem(inputBuffer.substring(0, inputBuffer.length() - 1));
             }
         }
+
         for(String name : taskNames){
             if(name.startsWith(inputBuffer)){
                 box.addItem(name);
@@ -64,9 +69,24 @@ public class ComboBoxKeyListener extends KeyAdapter {
         }
         box.showPopup();
 
+        manualInput = false;
+
+        // This is called in ItemListener because this KeyListener automatically triggers ItemListener
+        // to avoid calling the search twice.
+        //searchTask();
+
+    }
+
+    public void setInputBuffer(String inputBuffer) {
+        this.inputBuffer = inputBuffer;
+    }
+
+    public void searchTask(){
         taskLoading = new TaskLoadingThread(taskUI, inputBuffer, taskNames);
         taskLoading.start();
+    }
 
-
+    public boolean isManualInput() {
+        return manualInput;
     }
 }

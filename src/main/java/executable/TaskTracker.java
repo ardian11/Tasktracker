@@ -24,7 +24,7 @@ public class TaskTracker {
         getSavedData(controller.getSavedData());
         ui = new TrackerUI(this);
         if(preferences.getObject().afkWarning()) {
-            AFKDetector.activate();
+            //AFKDetector.activate();
         }
     }
 

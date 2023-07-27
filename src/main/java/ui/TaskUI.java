@@ -48,14 +48,23 @@ public class TaskUI extends JPanel {
             this.taskNameBox.addItem(name);
         }
 
-        this.taskNameBox.getEditor().getEditorComponent().addKeyListener(new ComboBoxKeyListener(this, taskNames));
+        ComboBoxKeyListener comboBoxKeyListener = new ComboBoxKeyListener(this, taskNames);
+        this.taskNameBox.getEditor().getEditorComponent().addKeyListener(comboBoxKeyListener);
+        this.taskNameBox.addActionListener(l->{
+            System.out.println("manualInput: " + comboBoxKeyListener.isManualInput());
+            if(!comboBoxKeyListener.isManualInput()){
+                comboBoxKeyListener.setInputBuffer(taskNameBox.getSelectedItem().toString());
+            }
+            comboBoxKeyListener.searchTask();
+        });
 
-        timerText = new JTextField("00:00");
+        timerText = new JTextField("00:00:00");
         ActionListener updateTime = e -> {
             currentTime += 1;
             long seconds = currentTime % 60;
-            long minutes = currentTime / 3600;
-            timerText.setText(String.format("%02d:%02d", minutes, seconds));
+            long minutes = currentTime % 3600 / 60 ;
+            long hours = currentTime / 3600;
+            timerText.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
         };
         timerText.addActionListener(updateTime);
         timer = new Timer(1000, updateTime);
@@ -78,7 +87,7 @@ public class TaskUI extends JPanel {
         stop.addActionListener(e -> {
             timer.stop();
             currentTime = 0;
-            timerText.setText("00:00");
+            timerText.setText("00:00:00");
             started = false;
             start.setText("Start");
         });
