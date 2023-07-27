@@ -94,7 +94,7 @@ public class TaskUI extends JPanel {
     }
 
     public void loadTask(String taskName){
-
+        System.out.println("Loading task: " + taskName);
     }
 
     public JCheckBox getMark() {
